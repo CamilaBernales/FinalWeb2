@@ -7,18 +7,19 @@ header.innerHTML = navbar();
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const response = await fetch("place.json");
+    if (localStorage.getItem("purchaseId")) {
+      localStorage.removeItem("purchaseId");
+    }
+    const response = await fetch("http://localhost:3000/api/ciudades");
     const data = await response.json(); // Esperamos la respuesta
 
-    console.log("data", data);
     cardContainer.innerHTML = "";
-
     data.forEach((place) => {
       cardContainer.innerHTML += card(
         place.city,
         place.desc,
         place.price,
-        place.id,
+        place._id,
         place.img
       );
     });
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const btnCity = document.getElementsByName("btnCity");
     Array.from(btnCity).forEach((button) => {
       button.addEventListener("click", (e) => {
-        const city = JSON.parse(e.target.dataset.city);
+        const city = e.target.dataset.city;
         localStorage.setItem("selectedCity", JSON.stringify(city));
         window.location.href = "./pages/info";
       });

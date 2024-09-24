@@ -1,16 +1,19 @@
-const mongoose = require("mongoose");
+// models/ciudad.js
+const mongoose = require('mongoose');
 
-const HotelSchema = new mongoose.Schema({
-  name: String,
-  price: Number,
-});
-
-const CiudadSchema = new mongoose.Schema({
+const ciudadSchema = new mongoose.Schema({
+  id: Number,
   city: String,
   price: Number,
   desc: String,
   img: String,
-  hotels: [HotelSchema],
-});
+  hotels: [
+    {
+      id: Number,
+      name: String,
+      price: Number
+    }
+  ]
+}, { collection: 'city' });
 
-module.exports = mongoose.model("Ciudad", CiudadSchema);
+module.exports = mongoose.model('Ciudad', ciudadSchema);

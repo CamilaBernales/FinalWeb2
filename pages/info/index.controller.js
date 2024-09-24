@@ -9,14 +9,22 @@ const inputCant = document.getElementById("cant");
 const inputDays = document.getElementById("days");
 const selectedCity = JSON.parse(localStorage.getItem("selectedCity"));
 let city = [];
-const getTotal = () => {
-  const cant = inputCant.value;
-  const days = inputDays.value;
-  const selectedHotel = city.hotels.find(
-    (hotel) => hotel.name === hotelSelect.value
-  );
 
-  totalP.textContent = `$${cant * days * selectedHotel.price + city.price}`;
+const getTotal = () => {
+  const guests = parseInt(inputCant.value) || 1; 
+  const days = parseInt(inputDays.value) || 1; 
+  const selectedHotel = city.hotels.find((hotel) => hotel.name === hotelSelect.value);
+
+  if (selectedHotel) {
+    const basePrice = city.price;
+    const hotelPrice = selectedHotel.price;
+    
+    const total = basePrice + (hotelPrice * guests * days);
+    
+    totalP.textContent = `$${total}`;
+  } else {
+    totalP.textContent = "Por favor selecciona un hotel";
+  }
 };
 
 btn.addEventListener("click", () => {
@@ -32,20 +40,17 @@ btn.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const response = await fetch("place.json");
-  const data = await response.json(); // Esperamos la respuesta
+  const response = await fetch(`http://localhost:3000/api/ciudades/${selectedCity}`);
+  const data = await response.json();
+  city = data;
 
-  city = data.find((city) => city.id === selectedCity); //Este codigo puede variar dependiendo de como se obtenga la ciudad seleccionada
   totalP.textContent = `$${city.price}`;
-  document.getElementById(
-    "title"
-  ).textContent = `Calcula tu viaje a ${city.city}`;
+  document.getElementById("title").textContent = `Calcula tu viaje a ${city.city}`;
   document.getElementById("img").src = city.img;
   document.getElementById("desc").textContent = city.desc;
 
   let hotels = ``;
-
-  city.hotels.forEach((hotel) => {
+  data.hotels.forEach((hotel) => {
     hotels += `<option>${hotel.name}</option>`;
   });
 
